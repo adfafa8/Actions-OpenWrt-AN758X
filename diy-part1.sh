@@ -37,6 +37,7 @@ ADD_WATCHDOG=true      # luci-app-watchdog（看门狗，包在子目录，需�
 ADD_TASKPLAN=true      # luci-app-taskplan（定时任务）
 ADD_OAF=true           # luci-app-oaf（应用过滤，含内核模块，高风险）
 ADD_TIMECONCTROL=true  # luci-app-timecontrol(上网控制)
+ADD_AURORA=true        # luci-theme-aurora(主题)
 ADD_LUCI_APP=true       # qwe3017/luci-app 仓库（monorepo）
                         #   ├─ luci-app-natmode     NAT 类型三选一（网络 → NAT 类型）
                         #   └─ luci-app-pon-status  PON 光模块卡片（概览页「系统」下一格)
@@ -207,6 +208,10 @@ if [ "$ADD_TIMECONCTROL" = "true" ]; then
   clone https://github.com/sirpdboy/luci-app-timecontrol "$PKG_DIR/luci-app-timecontrol" main
 fi
 
+# --- aurora ---
+if [ "$ADD_TIMECONCTROL" = "true" ]; then
+  clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora" master
+fi
 
 
 
