@@ -21,10 +21,10 @@ mkdir -p "$PKG_DIR"
 # 温度不再用 luci-app-temp-status —— 由 autocore 的 /sbin/tempinfo 提供，
 # 见 files/sbin/tempinfo（概览页「温度」行：CPU / WiFi / PON 温度 + 光功率）
 # ---------------------------------------------------------
-ADD_AIROHA_NPU=luci-theme-argon does not support CSS source minification    # luci-app-airoha-npu：Airoha SoC 状态页（NPU/CPU/Frame Engine/PPE）
+ADD_AIROHA_NPU=true    # luci-app-airoha-npu：Airoha SoC 状态页（NPU/CPU/Frame Engine/PPE）
 
-ADD_PASSWALL=false      # luci-app-passwall（含依赖源）
-ADD_OPENCLASH=false     # luci-app-openclash ⚠ 依赖 Ruby/Rust，编译极慢
+ADD_PASSWALL=false     # luci-app-passwall（含依赖源）
+ADD_OPENCLASH=false    # luci-app-openclash ⚠ 依赖 Ruby/Rust，编译极慢
 ADD_MOSDNS=false       # luci-app-mosdns + v2ray-geodata
 ADD_LUCKY=false        # luci-app-lucky（DDNS + socat）
 ADD_TAILSCALE=false    # luci-app-tailscale
@@ -33,15 +33,12 @@ ADD_SMARTDNS=false     # luci-app-smartdns
 ADD_EASYTIER=false     # luci-app-easytier（另需 kmod-tun + easytier 本体，Rust 编译较慢）
 ADD_POWEROFF=false     # luci-app-poweroffdevice（关机）
 ADD_OWQ_WOL=false      # luci-app-owq-wol（网络唤醒，依赖 etherwake）
-ADD_WATCHDOG=true      # luci-app-watchdog（看门狗，包在子目录，需特殊处理）
-ADD_TASKPLAN=true      # luci-app-taskplan（定时任务）
-ADD_OAF=true           # luci-app-oaf（应用过滤，含内核模块，高风险）
-ADD_TIMECONCTROL=true  # luci-app-timecontrol(上网控制)
-ADD_AURORA=true        # luci-theme-aurora(主题)
+ADD_WATCHDOG=false     # luci-app-watchdog（看门狗，包在子目录，需特殊处理）
+ADD_TASKPLAN=false     # luci-app-taskplan（定时任务）
+ADD_OAF=false          # luci-app-oaf（应用过滤，含内核模块，高风险）
 ADD_LUCI_APP=true       # qwe3017/luci-app 仓库（monorepo）
                         #   ├─ luci-app-natmode     NAT 类型三选一（网络 → NAT 类型）
-                        #   └─ luci-app-pon-status  PON 光模块卡片（概览页「系统」下一格)
- 
+                        #   └─ luci-app-pon-status  PON 光模块卡片（概览页「系统」下一格）
 
 clone() {  # clone <url> <dir> [branch]
   local url="$1" dir="$2" br="$3"
@@ -202,19 +199,6 @@ if [ "$ADD_OAF" = "true" ]; then
   done
   rm -rf "$PKG_DIR/OpenAppFilter"
 fi
-
-# --- timecontrol ---
-if [ "$ADD_TIMECONCTROL" = "true" ]; then
-  clone https://github.com/sirpdboy/luci-app-timecontrol "$PKG_DIR/luci-app-timecontrol" main
-fi
-
-# --- aurora ---
-if [ "$ADD_TIMECONCTROL" = "true" ]; then
-  clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora" master
-fi
-
-
-
 # ---------------------------------------------------------
 # 校验：默认开启的两个插件必须拉到，否则 defconfig 会静默剔除，
 #       编出来的固件缺少状态页还不易察觉
