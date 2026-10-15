@@ -36,6 +36,7 @@ ADD_OWQ_WOL=false      # luci-app-owq-wol（网络唤醒，依赖 etherwake）
 ADD_WATCHDOG=false     # luci-app-watchdog（看门狗，包在子目录，需特殊处理）
 ADD_TASKPLAN=false     # luci-app-taskplan（定时任务）
 ADD_OAF=false          # luci-app-oaf（应用过滤，含内核模块，高风险）
+ADD_TIMECONCTROL=true  # luci-app-timecontrol(上网控制)
 ADD_LUCI_APP=true       # qwe3017/luci-app 仓库（monorepo）
                         #   ├─ luci-app-natmode     NAT 类型三选一（网络 → NAT 类型）
                         #   └─ luci-app-pon-status  PON 光模块卡片（概览页「系统」下一格）
@@ -167,6 +168,11 @@ fi
 # --- openlist2 ---
 if [ "$ADD_OPENLIST" = "true" ]; then
   clone https://github.com/sbwml/luci-app-openlist2 "$PKG_DIR/luci-app-openlist2" main
+fi
+
+# --- timecontrol ---
+if [ "$ADD_TIMECONCTROL" = "true" ]; then
+  clone https://github.com/sirpdboy/luci-app-timecontrol "$PKG_DIR/luci-app-timecontrol" main
 fi
 
 if [ "$ADD_SMARTDNS" = "true" ]; then
