@@ -172,7 +172,7 @@ fi
 
 # --- timecontrol ---
 if [ "$ADD_TIMECONCTROL" = "true" ]; then
-  clone https://github.com/sirpdboy/luci-app-timecontrol "$PKG_DIR/luci-app-timecontrol" main
+  clone https://github.com/sirpdboy/luci-app-timecontrol/luci-app-timecontrol "$PKG_DIR/luci-app-timecontrol" main
 fi
 
 if [ "$ADD_SMARTDNS" = "true" ]; then
