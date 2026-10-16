@@ -39,6 +39,7 @@ ADD_OAF=false          # luci-app-oaf（应用过滤，含内核模块，高风�
 ADD_TIMECONCTROL=true  # luci-app-timecontrol(上网控制)
 ADD_DEVICEACCESS=true  # luci-app-device-access(设备控制)
 ADD_ACCESSCONTROL=true # luci-app-accesscontrol(上网控制)
+ADD_PARENTCONTROL=true # luci-app-parentcontrol(家长控制)
 ADD_AURORA=true        # luci-theme-aurora(主题)
 ADD_LUCI_APP=true       # qwe3017/luci-app 仓库（monorepo）
                         #   ├─ luci-app-natmode     NAT 类型三选一（网络 → NAT 类型）
@@ -186,6 +187,11 @@ fi
 # --- accesscontrol ---
 if [ "$ADD_ACCESSCONTROL" = "true" ]; then
   clone https://github.com/aige168/luci-app-accesscontrol "$PKG_DIR/luci-app-accesscontrol" main
+fi
+
+# --- parentcontrol ---
+if [ "$ADD_PARENTCONTROL" = "true" ]; then
+  clone https://github.com/sirpdboy/luci-app-parentcontrol "$PKG_DIR/luci-app-parentcontrol" main
 fi
 
 # --- aurora ---
