@@ -35,6 +35,12 @@ ADD_OWQ_WOL=true       # luci-app-owq-wol（网络唤醒，依赖 etherwake）
 ADD_WATCHDOG=true      # luci-app-watchdog（看门狗，包在子目录，需特殊处理）
 ADD_TASKPLAN=true      # luci-app-taskplan（定时任务）
 ADD_OAF=true           # luci-app-oaf（应用过滤，含内核模块，高风险）
+
+
+ADD_DDNSGO=true   # luci-app-ddnsgo
+ADD_AURORA=true    # luci-theme-aurora
+
+
 ADD_LUCI_APP=true       # qwe-qaq/luci-app 仓库（monorepo）
                         #   ├─ luci-app-natmode     NAT 类型三选一（网络 → NAT 类型）
                         #   ├─ luci-app-pon-status  PON 光模块卡片（概览页「系统」下一格）
@@ -354,6 +360,24 @@ fi
 if [ "$ADD_TASKPLAN" = "true" ]; then
   clone https://github.com/sirpdboy/luci-app-taskplan "$PKG_DIR/luci-app-taskplan" main
 fi
+
+
+
+if [ "$ADD_DDNSGO" = "true" ]; then
+  clone https://github.com/jeessy2/ddns-go "$PKG_DIR/luci-app-ddnsgo" master
+fi
+
+if [ "$ADD_AURORA" = "true" ]; then
+  clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora" master
+fi
+
+
+
+
+
+
+
+
 # --- watchdog ---
 # ⚠ 仓库是 monorepo：根目录无 Makefile，luci-app-watchdog/（前端）与
 #   watchdog/（本体）是两个包，前者依赖 +watchdog，两个都要拷。
