@@ -639,4 +639,57 @@ if [ -n "$(ls -A "$PKG_DIR" 2>/dev/null)" ]; then
 else
   echo "未启用任何第三方插件"
 fi
+
+
+# ---------------------------------------------------------------
+# 947 SRAM 拥塞剖面 (2026-11-04 引入, 上游 pbs05/ponwrt PR #64)
+#
+# 症状: XG-040G-MD 的 lan2/lan3 互联网方向吞吐被卡在 ~300-500 Mbps,
+#       内网 iperf3 正常, lan1(2.5G)/lan4 正常 (上游 issue #50 同机型报告)。
+#
+# 根因: AN7581 默认开启 TX 拥塞丢弃, 但从没编程动态阈值 ->
+#       遗留的 channel/queue 最小值只有 22/2 ->
+#       2.5G 入向突发打向 1G 出口时, 即使平均只有 500 Mbps 也提前丢包。
+#       PR #64 按 AN7581 SDK 的 16K SRAM 剖面初始化 total/channel/queue
+#       三级阈值 + DEI 半值边界 + 250us 动态重算, 只对
+#       airoha_is_7581() 且 QDMA0/QDMA1 且 16384 描述符池生效。
+#
+# 状态 (2026-11-10 复核): PR #64 仍是 open + draft, 未合并;
+#       ponwrt HEAD d9dd3a49 的 patches-6.18/ 里没有 947-*, Linux 主线
+#       airoha_regs.h 也没有 REG_TXQ_DYN_*_THR。两个补丁都未被上游吸收。
+#       本线 REPO_REF 已于 2026-11-10 抬到 d9dd3a49 (内核 6.18.60),
+#       已在 6.18.60 源码上按字母序 git apply 完整 172 个上游补丁 (172/172 通过),
+#       再链式应用 947-01 -> 947-02 均成功, 落地断言与编译期依赖符号全部存在。
+#       所以只能继续本地叠加。
+#       关闭方式: 手动运行 workflow 时设 sram_fix=no。
+#
+# 两个补丁有依赖: WAN 那个的上下文引用 LAN 那个新加的函数,
+# 必须严格按 01 -> 02 顺序应用, 文件名前缀已保证字母序。
+# ---------------------------------------------------------------
+SRAM_FIX="${WITH_SRAM_FIX:-1}"
+if [ "$SRAM_FIX" = "1" ]; then
+  PATCH_ROOT="${GITHUB_WORKSPACE:-$(cd "$(dirname "$0")" && pwd)}/patches/airoha-kernel"
+  DEST=target/linux/airoha/patches-6.18
+  if [ ! -d "$DEST" ]; then
+    echo "FATAL: 找不到 $DEST (target/linux/airoha 布局变了?)"
+    exit 1
+  fi
+  for p in 947-01-net-airoha-initialize-lan-sram-congestion.patch \
+           947-02-net-airoha-initialize-wan-sram-congestion.patch; do
+    if [ ! -f "$PATCH_ROOT/$p" ]; then
+      echo "FATAL: 缺少 $PATCH_ROOT/$p"
+      exit 1
+    fi
+    cp "$PATCH_ROOT/$p" "$DEST/$p"
+    echo "已安装内核补丁: $DEST/$p"
+  done
+  echo "=== 947 SRAM 拥塞剖面已注入: AN7581 QDMA0(16K池) 按 SDK 阈值初始化 ==="
+else
+  echo "=== WITH_SRAM_FIX=0: 跳过 947 SRAM 拥塞剖面 (上游默认行为) ==="
+fi
+
+
+
+
+
 echo "🎉 diy-part1.sh 执行完毕"
