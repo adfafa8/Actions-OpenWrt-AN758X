@@ -371,6 +371,10 @@ if [ "$ADD_AURORA" = "true" ]; then
   clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora" master
 fi
 
+if [ "$ADD_AURORA" = "true" ]; then
+  clone https://github.com/eamonxg/luci-app-aurora-config "$PKG_DIR/luci-app-aurora-config" master
+fi
+
 
 
 
